@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="tab-container requires-unauth">
+        <div class="tab" id="signup">Sign Up</div>
+        <div class="tab active" id="login">Log In</div>
+      </div>
+      <form name="signup" class="requires-unauth">
+        <input name="email" type="text" placeholder="email" />
+        <input name="password" type="password" placeholder="password" />
+        <button>Sign Up</button>
+      </form>
+      <form name="login" class="active requires-unauth">
+        <input name="email" type="text" placeholder="email" />
+        <input name="password" type="password" placeholder="password" />
+        <button>Log In</button>
+      </form>
+      <button name="logout" class="requires-auth">Logout</button>
+    </header>
+    <main class="requires-auth">
+      <form name="todo">
+        <input name="body" type="text" placeholder="body" />
+        <input name="tags" type="text" placeholder="tags" />
+        <button>Post</button>
+      </form>
+      <ul></ul>
+    </main>
+    <aside>
+      <p class="message"></p>
+    </aside>
+    <script src="app.js"></script>
+  </body>
+</html>
