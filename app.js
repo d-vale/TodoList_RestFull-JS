@@ -1,5 +1,31 @@
-// **À IMPLEMENTER**
-// Devrait permettre de regarder si l'utilisateur est authentifié 
+"use strict";
+
+//Sélecteur
+const formSignUp = document.querySelector(`form.active`);
+
+//EventListener SignUp
+formSignUp.addEventListener("submit", function (e) {
+  e.preventDefault();
+  const InputMail = formSignUp.querySelector("input[name='email']");
+  const InputPassword = formSignUp.querySelector("input[name='password']");
+  const formData = new FormData(formSignUp);
+  createUser(Object.fromEntries(formData));
+  formSignUp.reset();
+});
+
+// Création d'un compte utilisateur
+const createUser = async (formData) => {
+  const options = {
+    "method": "POST",
+    "headers": { "Content-Type": "application/json" },
+    "body": JSON.stringify(formData)
+  };
+
+  //MAINTENANT L'OBJECT EST PRÊT A ÊTRE ENVOYER EN POST
+  fetch("url", options);
+
+};
+
 const isAuthenticated = () => false;
 
 // Affiche un message à l'utilisateur.
