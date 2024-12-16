@@ -1,30 +1,49 @@
 "use strict";
+//Variables
+const token = "";
 
 //Sélecteur
-const formSignUp = document.querySelector(`form.active`);
+const formSignUp = document.querySelector(`form[name='signup'`);
+const formLogin = document.querySelector(`form[name='login'`);
 
 //EventListener SignUp
 formSignUp.addEventListener("submit", function (e) {
   e.preventDefault();
-  const InputMail = formSignUp.querySelector("input[name='email']");
-  const InputPassword = formSignUp.querySelector("input[name='password']");
+/*   const InputMail = formSignUp.querySelector("input[name='email']");
+  const InputPassword = formSignUp.querySelector("input[name='password']"); */
   const formData = new FormData(formSignUp);
   createUser(Object.fromEntries(formData));
   formSignUp.reset();
 });
 
+//EventListener Login
+formLogin.addEventListener("submit", function (e) {
+  e.preventDefault();
+  const formData = new FormData(formLogin);
+  const data = Object.fromEntries(formData);
+  loginUser(data.email, data.password);
+  formLogin.reset();
+})
+
 // Création d'un compte utilisateur
 const createUser = async (formData) => {
+  //Les options pour le POST
   const options = {
     "method": "POST",
     "headers": { "Content-Type": "application/json" },
     "body": JSON.stringify(formData)
   };
-
-  //MAINTENANT L'OBJECT EST PRÊT A ÊTRE ENVOYER EN POST
-  fetch("url", options);
-
+  const reponse = await fetch("https://progweb-todo-api.onrender.com/users/", options); //Appel de l'API en POST avec l'options
+  const data = await reponse.json(); //Transformation en JSON
+  await displayMessage(data.message); //Mise à jour du message selon la réponse de l'API
 };
+
+// Login d'un utilisateur
+const loginUser = async (mail, password) => {
+const options = {
+
+}
+}
 
 const isAuthenticated = () => false;
 
