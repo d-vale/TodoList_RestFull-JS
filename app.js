@@ -1,14 +1,13 @@
 "use strict";
-//Variables
-const token = "";
 
-//Sélecteur
+//Sélecteur --------------------------------------------------------------------------------------------
 const formSignUp = document.querySelector(`form[name='signup'`);
 const formLogin = document.querySelector(`form[name='login'`);
 const logoutButton = document.querySelector(`button[name='logout'`);
 const formPostTodo = document.querySelector(`form[name='todo'`);
 const todosContainer = document.querySelector(`ul`);
 
+//EventListeners FORM --------------------------------------------------------------------------------------------
 //EventListener SignUp
 formSignUp.addEventListener("submit", function (e) {
   e.preventDefault();
@@ -53,59 +52,117 @@ todosContainer.addEventListener("click", function (e) {
   }
 });
 
+//API REST --------------------------------------------------------------------------------------------
 // Création d'un compte utilisateur
 const createUser = async (formData) => {
-  //Les options pour le POST
-  const options = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData),
-  };
-  const reponse = await fetch(
-    "https://progweb-todo-api.onrender.com/users/",
-    options
-  ); //Appel de l'API en POST avec l'options
-  const data = await reponse.json(); //Transformation en JSON
-  await displayMessage(data.message); //Mise à jour du message selon la réponse de l'API
+  try {
+    //Les options pour le POST
+    const options = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    };
+    const reponse = await fetch(
+      "https://progweb-todo-api.onrender.com/users/",
+      options
+    ); //Recup API
+    const data = await reponse.json(); //Transformation en JSON
+    displayMessage(data.message); //Mise à jour du message selon la réponse de l'API
+  } catch (e) {
+    displayMessage(e); //Affiche message d'erreur en cas d'erreur
+  }
 };
 
 // Login d'un utilisateur
 const loginUser = async (mailAndPassword) => {
-  const options = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(mailAndPassword),
-  };
-  //API LOGIN
-  const reponse = await fetch(
-    "https://progweb-todo-api.onrender.com/users/login",
-    options
-  );
-  const data = await reponse.json(); //Transformation JSON
-  await displayMessage(data.message); //Mets le message
-  await localStorage.setItem("token", data.token); //Enregistre le token dans le localStorage
-  await pageLoad(); //Reload les éléments de la page
+  try {
+    const options = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(mailAndPassword),
+    };
+    //API LOGIN
+    const reponse = await fetch(
+      "https://progweb-todo-api.onrender.com/users/login",
+      options
+    ); //Recup API
+    const data = await reponse.json(); //Transformation JSON
+    displayMessage(data.message); //Mets le message
+    localStorage.setItem("token", data.token); //Enregistre le token dans le localStorage
+    pageLoad(); //Reload les éléments de la page
+  } catch (e) {
+    displayMessage(e); //Affiche message d'erreur en cas d'erreur
+  }
 };
 
 //Récupérer les todos
 const getTodos = async () => {
+  try {
+    const options = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+    const reponse = await fetch(
+      "https://progweb-todo-api.onrender.com/todos/",
+      options
+    ); //Recup API
+    const data = await reponse.json(); //Transformer en object JS
+    displayTodos(data.todos); //Appel fonction affichage des todos
+  } catch (e) {
+    displayMessage(e); //Affiche message d'erreur en cas d'erreur
+  }
+};
+
+//Fonction ajouter des todos !
+const addTodos = async (todo) => {
+  try {
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(todo),
+    };
+
+    const reponse = await fetch(
+      "https://progweb-todo-api.onrender.com/todos/",
+      options
+    ); //Recup API
+    const data = await reponse.json();
+    displayMessage(data.message); //Mettre le message reçu
+    pageLoad(); //Refresh la page en appellant la fonction
+  } catch (e) {
+    displayMessage(e); //Affiche message d'erreur en cas d'erreur
+  }
+};
+
+//Fonction supprimer des todos
+const deleteTodo = async (todoID) => {
   const options = {
-    method: "GET",
+    method: "DELETE",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
+    body: JSON.stringify(null),
   };
+
   const reponse = await fetch(
-    "https://progweb-todo-api.onrender.com/todos/",
+    `https://progweb-todo-api.onrender.com/todos/${todoID}`,
     options
-  ); //Recup API
-  const data = await reponse.json(); //Transformer en object JS
-  await displayTodos(data.todos);
+  );
+  const data = await reponse.json();
+  await displayMessage(data.message);
+  await pageLoad();
 };
 
-//Afficher les todos
-const displayTodos = async (todos) => {
+//Base function --------------------------------------------------------------------------------------------
+//Display todos
+const displayTodos = (todos) => {
   todosContainer.replaceChildren();
   todos.forEach((el) => {
     const html = `
@@ -119,54 +176,8 @@ const displayTodos = async (todos) => {
   });
 };
 
-//Fonction ajouter des todos !
-const addTodos = async (todo) => {
-  const options = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-    body: JSON.stringify(todo),
-  };
-
-  const reponse = await fetch(
-    "https://progweb-todo-api.onrender.com/todos/",
-    options
-  ); //Recup API
-  const data = await reponse.json();
-  displayMessage(data.message);
-  pageLoad();
-};
-
-//Fonction supprimer des todos
-const deleteTodo = async (todoID) => {
-  const options = {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-    body : JSON.stringify(null)
-  };
-
-  const reponse = await fetch(
-    `https://progweb-todo-api.onrender.com/todos/${todoID}`,
-    options
-  );
-  const data = await reponse.json();
-  await displayMessage(data.message);
-  await pageLoad();
-};
-
 //True si l'utilisateur est logé, sinon false
-const isAuthenticated = () => {
-  if (localStorage.getItem("token")) {
-    return true;
-  } else {
-    return false;
-  }
-};
+const isAuthenticated = () => !!localStorage.getItem("token");
 
 // Affiche un message à l'utilisateur.
 const displayMessage = (message) => {
@@ -197,7 +208,6 @@ const toggleForm = (formName) => {
   document.querySelector(`.tab#${formName}`).classList.add("active"); // Active l'onglet spécifié.
 };
 
-// **À COMPLETER**
 // Initialisation de la page
 const initEventListeners = () => {
   document.querySelector(".tab-container").addEventListener("click", (e) => {
@@ -208,11 +218,16 @@ const initEventListeners = () => {
   });
 };
 
-// **À COMPLETER**
+//Reload la page en mettant à jour l'interface selon le login et les todos
 const pageLoad = () => {
-  handleInterfaceAuth();
-  initEventListeners();
-  getTodos();
+  if (localStorage.getItem("token")) {
+    handleInterfaceAuth(); //Interface selon si user login ou non
+    initEventListeners(); //Interface initialisation
+    getTodos(); //Récuperer les todos si login et les afficher
+  } else {
+    handleInterfaceAuth(); //Interface selon si user login ou non
+    initEventListeners(); //Interface initialisation
+  }
 };
 
 pageLoad();
