@@ -156,8 +156,8 @@ const deleteTodo = async (todoID) => {
     options
   );
   const data = await reponse.json();
-  await displayMessage(data.message);
-  await pageLoad();
+  displayMessage(data.message);
+  pageLoad();
 };
 
 //Base function --------------------------------------------------------------------------------------------
