@@ -220,13 +220,10 @@ const initEventListeners = () => {
 
 //Reload la page en mettant à jour l'interface selon le login et les todos
 const pageLoad = () => {
-  if (localStorage.getItem("token")) {
-    handleInterfaceAuth(); //Interface selon si user login ou non
-    initEventListeners(); //Interface initialisation
+  handleInterfaceAuth(); //Interface selon si user login ou non
+  initEventListeners(); //Interface initialisation
+  if (isAuthenticated()) {
     getTodos(); //Récuperer les todos si login et les afficher
-  } else {
-    handleInterfaceAuth(); //Interface selon si user login ou non
-    initEventListeners(); //Interface initialisation
   }
 };
 
